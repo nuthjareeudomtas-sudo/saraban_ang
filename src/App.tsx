@@ -113,14 +113,32 @@ export default function App() {
     setActiveIntranetTab('dashboard');
   };
 
-  const handleLoginSuccess = (selected: User) => {
-    setCurrentUser(selected);
-    if (selected.role === 'citizen') {
-      setPortalMode('public');
+  // ค้นหาฟังก์ชันล็อกอินเดิม แล้วปรับเนื้อหาด้านในให้เป็นแบบนี้:
+const handleLogin = async (username, password) => {
+  try {
+    // ยิงข้อมูลไปที่ระบบหลังบ้าน Cloudflareที่เราสร้างไว้
+    const response = await fetch('/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      alert("เข้าสู่ระบบสำเร็จ");
+      // โค้ดเดิมที่พาเปลี่ยนหน้า หรือเซ็ตสถานะล็อกอิน เช่น setIsLoggedIn(true)
     } else {
-      setPortalMode('intranet');
-      setActiveIntranetTab('dashboard');
+      alert(data.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
     }
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("เกิดข้อผิดพลาดในการเชื่อมต่อระบบหลังบ้าน");
+  }
+};
+
   };
 
   // Handlers
