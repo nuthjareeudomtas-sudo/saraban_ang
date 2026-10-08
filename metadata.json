@@ -1,0 +1,6 @@
+{
+  "name": "ระบบสารสนเทศและบริการอิเล็กทรอนิกส์ อบต. (SAO Smart Intranet & E-Service Portal)",
+  "description": "ระบบบริหารจัดการภายในองค์กรและบริการประชาชนสำหรับ องค์การบริหารส่วนตำบล (อบต.) ครอบคลุมระบบสารบรรณอิเล็กทรอนิกส์, ระบบแจ้งซ่อม 2 ช่องทาง, ระบบขอใบอนุญาตออนไลน์ & Dynamic Form Builder, ระบบปฏิทินปฏิบัติงาน & เวรยาม, ระบบการลาออนไลน์พร้อมตัดโควตา และระบบจัดการสิทธิ์ RBAC",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
