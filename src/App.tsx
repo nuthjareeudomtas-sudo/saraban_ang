@@ -112,24 +112,53 @@ export default function App() {
     setPortalMode('public');
     setActiveIntranetTab('dashboard');
   };
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const response = await fetch('/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-  // ค้นหาฟังก์ชันล็อกอินเดิม แล้วปรับเนื้อหาด้านในให้เป็นแบบนี้:
-const handleLogin = async (username, password) => {
-  try {
-    // ยิงข้อมูลไปที่ระบบหลังบ้าน Cloudflareที่เราสร้างไว้
-    const response = await fetch('/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
-
-    if (response.ok && data.success) {
-      alert("เข้าสู่ระบบสำเร็จ");
-      // โค้ดเดิมที่พาเปลี่ยนหน้า หรือเซ็ตสถานะล็อกอิน เช่น setIsLoggedIn(true)
+      if (response.ok && data.success) {
+        // ค้นหาข้อมูลสิทธิ์จำลองเพื่อนำมาเซ็ตเข้าระบบหน้าบ้าน
+        // (อ้างอิงจากตัวแปร INITIAL_USERS เดิมในเครื่อง)
+        const foundUser = INITIAL_USERS.find(u => u.username === username);
+        
+        if (foundUser) {
+          handleLoginSuccess(foundUser);
+        } else {
+          // หากเป็น User ใหม่ที่เพิ่มใน KV แต่ไม่มีสิทธิ์ใน INITIAL_USERS ให้กำหนดสิทธิ์เริ่มต้นเป็น citizen
+          handleLoginSuccess({
+            id: `usr_${username}`,
+            username: username,
+            prefix: 'นาย',
+            firstName: username,
+            lastName: 'ผู้ใช้งานใหม่',
+            position: 'ผู้ใช้งานทั่วไป',
+            departmentId: 'dept-public',
+            departmentName: 'ประชาชนทั่วไป',
+            role: 'citizen',
+            mustChangePassword: false,
+            modules: {
+              centralRegistry: false, repairDispatch: false, permitReview: false,
+              permitApprove: false, hrManagement: false, leaveReview: false,
+              leaveApprove: false, calendarManage: false, cmsAdmin: false, auditLogView: false
+            }
+          });
+        }
+      } else {
+        alert(data.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อระบบหลังบ้าน");
+    }
+  };
     } else {
       alert(data.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
     }
